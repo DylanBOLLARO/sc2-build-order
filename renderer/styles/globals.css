@@ -1,0 +1,23 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.drag{
+  -webkit-app-region: drag;
+}
+
+body{
+  @apply  select-none;
+}
+
+.category1 {
+  color: red;
+}
+
+.category2 {
+  color: blue;
+}
+
+.category3 {
+  color: green;
+}
