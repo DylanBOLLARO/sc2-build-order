@@ -4,7 +4,7 @@
     "next-env.d.ts",
     "**/*.ts",
     "**/*.tsx"
-, "pages/home.jsx"  ],
+, "pages/home.jsx", "components/settings/CreateNewBuildOrder.jsx", "components/settings/BuildOrderAvailable.jsx", "pages/settings/ViewAndChange.jsx"  ],
   "exclude": [
     "node_modules"
   ]

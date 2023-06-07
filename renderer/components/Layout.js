@@ -39,12 +39,12 @@ export default function Layout({ title, children }) {
       </Head>
 
       <div className="flex flex-col">
-        <header className="flex flex-row gap-2 drag">
-          <div className="flex bg-black/50 rounded py-1 text-zinc-300 justify-center items-center h-12 w-full">
+        <header className="drag flex flex-row gap-2">
+          <div className="flex h-12 w-full items-center justify-center rounded bg-black/50 py-1 text-zinc-300">
             <p className="text-xl">{title}</p>
           </div>
           {pathname === "/home" && (
-            <div className="flex bg-black/50 rounded py-1 text-zinc-300 justify-center items-center h-12 px-3">
+            <div className="flex h-12 items-center justify-center rounded bg-black/50 px-3 py-1 text-zinc-300">
               <p className="text-2xl">
                 <GoSettings />
               </p>

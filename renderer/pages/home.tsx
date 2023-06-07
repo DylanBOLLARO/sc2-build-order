@@ -32,8 +32,7 @@ function Home() {
     });
 
     ipcRenderer.on("num5", () => {
-      // ipcRenderer.send("create-new-window");
-      ipcRenderer.send("show-sample");
+      ipcRenderer.send("show-settings");
     });
 
     return () => {

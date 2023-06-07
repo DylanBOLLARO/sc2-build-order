@@ -9,7 +9,7 @@ const dbFilePath = path.join(__dirname, "database");
 const isProd = process.env.NODE_ENV === "production";
 
 let mainWindow = null;
-let sampleWindow = null;
+let settingsWindow = null;
 
 if (isProd) {
   serve({ directory: "app" });
@@ -33,39 +33,41 @@ if (isProd) {
     transparent: true,
   });
 
-  sampleWindow = createWindow("sample", {
-    parent: mainWindow,
-    modal: true,
-    width: 1500,
+  settingsWindow = createWindow("settings", {
+    title: "Settings",
+    maximizable: true,
+    width: 1200,
     height: 800,
-    alwaysOnTop: true,
+    minHeight: 500,
+    minWidth: 700,
     show: false,
+    autoHideMenuBar: true,
   });
 
-  sampleWindow.center();
+  settingsWindow.center();
 
   if (isProd) {
     await mainWindow.loadURL("app://./home.html");
-    await sampleWindow.loadURL("app://./sample.html");
+    await settingsWindow.loadURL("app://./settings.html");
   } else {
     const port = process.argv[2];
     await mainWindow.loadURL(`http://localhost:${port}/home`);
-    await sampleWindow.loadURL(`http://localhost:${port}/sample`);
+    await settingsWindow.loadURL(`http://localhost:${port}/settings`);
     mainWindow.webContents.openDevTools();
-    sampleWindow.webContents.openDevTools();
+    settingsWindow.webContents.openDevTools();
   }
 
   if (mainWindow) {
-    mainWindow.setIgnoreMouseEvents(false, { forward: false });
+    mainWindow.setIgnoreMouseEvents(true, { forward: true });
   }
 
-  ipcMain.on("show-sample", () => {
-    sampleWindow.show();
+  ipcMain.on("show-settings", () => {
+    settingsWindow.show();
   });
 
-  sampleWindow.on("close", (event) => {
+  settingsWindow.on("close", (event) => {
     event.preventDefault();
-    sampleWindow.hide();
+    settingsWindow.hide();
   });
 
   globalShortcut.register("num7", () => {
@@ -97,80 +99,166 @@ if (isProd) {
   });
 
   db.serialize(() => {
-    // -- Table "Recettes"
-    db.run(
-      `CREATE TABLE IF NOT EXISTS Recettes (
-        ID INTEGER PRIMARY KEY,
-        Nom TEXT,
-        Description TEXT,
-        Temps INTEGER
-      )`,
-      (err) => {
+    db.get(
+      `SELECT name FROM sqlite_master WHERE type='table' AND name=?`,
+      ["categories"],
+      async (err, row) => {
         if (err) {
           console.error(err.message);
-          process.exit(1);
+          return;
         }
-        console.log("Created the Recettes table");
+        if (row) {
+          console.log(`La table categories existe.`);
+        } else {
+          try {
+            await new Promise<void>((resolve, reject) => {
+              db.run(
+                `CREATE TABLE IF NOT EXISTS categories (
+                  id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+                  title VARCHAR(150) NOT NULL,
+                  description TEXT
+                );`,
+                (err) => {
+                  if (err) {
+                    console.error(err.message);
+                    reject(err);
+                  } else {
+                    console.log("CREATE categories TABLE");
+                    resolve();
+                  }
+                }
+              );
+            });
+
+            await new Promise<void>((resolve, reject) => {
+              // 1 -> TvT, 2 -> TvZ, 3 -> TvP, 4 -> ZvT, 5 -> ZvZ, 6 -> ZvP, 7 -> PvT, 8 -> PvZ, 9 -> PvP
+              db.run(
+                `INSERT INTO categories (title)
+                VALUES ('tvt'), ('tvz'), ('tvp'),('zvt'), ('zvz'), ('zvp'), ('pvt'), ('pvz'), ('pvp');`,
+                (err) => {
+                  if (err) {
+                    console.error(err.message);
+                    process.exit(1);
+                  }
+                  console.log("INSERT categories DATA");
+                }
+              );
+            });
+          } catch (error) {
+            console.error("An error occurred:", error);
+          }
+        }
       }
     );
 
-    // -- Table "Ingredients"
-    db.run(
-      `CREATE TABLE IF NOT EXISTS Ingredients (
-        ID INTEGER PRIMARY KEY,
-        Nom TEXT
-      )`,
-      (err) => {
+    db.get(
+      `SELECT name FROM sqlite_master WHERE type='table' AND name=?`,
+      ["build_order"],
+      async (err, row) => {
         if (err) {
           console.error(err.message);
-          process.exit(1);
+          return;
         }
-        console.log("Created the Ingredients table");
+        if (row) {
+          console.log(`La table build_order existe.`);
+        } else {
+          try {
+            await new Promise<void>((resolve, reject) => {
+              db.run(
+                `CREATE TABLE IF NOT EXISTS build_order (
+                  id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+                  title VARCHAR(150) NOT NULL,
+                  content TEXT,
+                  category_id INTEGER,
+                  FOREIGN KEY (category_id) REFERENCES categories(id) ON DELETE SET NULL
+                );`,
+                (err) => {
+                  if (err) {
+                    console.error(err.message);
+                    reject(err);
+                  } else {
+                    console.log("CREATE build_order TABLE");
+                    resolve();
+                  }
+                }
+              );
+            });
+
+            await new Promise<void>((resolve, reject) => {
+              db.run(
+                `INSERT INTO build_order (title, category_id)
+                VALUES
+                    ('Crême anglaise', 2),
+                    ('Soupe', 1),
+                    ('Salade de fruit', 2);`,
+                (err) => {
+                  if (err) {
+                    console.error(err.message);
+                    process.exit(1);
+                  }
+                  console.log("INSERT build_order DATA");
+                }
+              );
+            });
+          } catch (error) {
+            console.error("An error occurred:", error);
+          }
+        }
       }
     );
 
-    // -- Table "Recette_Ingredients"
-    db.run(
-      `CREATE TABLE IF NOT EXISTS Recette_Ingredients  (
-        ID_Recette INTEGER,
-        ID_Ingredient INTEGER,
-        Quantite INTEGER,
-        FOREIGN KEY (ID_Recette) REFERENCES Recettes
+    // db.get(
+    //   `SELECT name FROM sqlite_master WHERE type='table' AND name=?`,
+    //   ["etapes"],
+    //   async (err, row) => {
+    //     if (err) {
+    //       console.error(err.message);
+    //       return;
+    //     }
+    //     if (row) {
+    //       console.log(`La table etapes existe.`);
+    //     } else {
+    //       try {
+    //         await new Promise<void>((resolve, reject) => {
+    //           db.run(
+    //             `CREATE TABLE IF NOT EXISTS etapes (
+    //               id_etapes INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+    //               content TEXT,
+    //             );`,
+    //             (err) => {
+    //               if (err) {
+    //                 console.error(err.message);
+    //                 reject(err);
+    //               } else {
+    //                 console.log("CREATE recipes etapes");
+    //                 resolve();
+    //               }
+    //             }
+    //           );
+    //         });
 
-(ID),
-        FOREIGN KEY (ID_Ingredient) REFERENCES Ingredients(ID)
-      )`,
-      (err) => {
-        if (err) {
-          console.error(err.message);
-          process.exit(1);
-        }
-        console.log("Created the Recette_Ingredients table");
-      }
-    );
-
-    // -- Table "Etapes"
-    db.run(
-      `CREATE TABLE IF NOT EXISTS Etapes (
-        ID INTEGER PRIMARY KEY,
-        ID_Recette INTEGER,
-        Description TEXT,
-        Temps INTEGER,
-        FOREIGN KEY (ID_Recette) REFERENCES Recettes(ID)
-      )`,
-      (err) => {
-        if (err) {
-          console.error(err.message);
-          process.exit(1);
-        }
-        console.log("Created the Etapes table");
-      }
-    );
-
-    // Vérifie si la table existe déjà avant de la créer
-    // db.run("INSERT INTO Recettes (Nom, Description, Temps) VALUES ('Gâteau au chocolat', 'Délicieux gâteau au chocolat fondant', 60)");
-
-    // db.run("INSERT INTO Ingredients (Nom) VALUES ('Chocolat')");
+    //         await new Promise<void>((resolve, reject) => {
+    //           db.run(
+    //             `INSERT INTO recipes (title, category_id)
+    //             VALUES
+    //                 ('Crême anglaise', 2),
+    //                 ('Soupe', 1),
+    //                 ('Salade de fruit', 2);`,
+    //             (err) => {
+    //               if (err) {
+    //                 console.error(err.message);
+    //                 process.exit(1);
+    //               }
+    //               console.log("INSERT recipes DATA");
+    //             }
+    //           );
+    //         });
+    //       } catch (error) {
+    //         console.error("An error occurred:", error);
+    //       }
+    //     }
+    //   }
+    // );
   });
 
   ipcMain.handle("db-query", async (event, sqlQuery) => {
@@ -185,18 +273,55 @@ if (isProd) {
     });
   });
 
+  ipcMain.handle("get-all-categories", async (event, sqlQuery) => {
+    return new Promise((resolve, reject) => {
+      db.all(sqlQuery, (err, rows) => {
+        if (err) {
+          reject(err.message);
+        } else {
+          resolve(rows);
+        }
+      });
+    });
+  });
+
+  ipcMain.on("close-settings-page", (e) => {
+    console.log("Closing settings page");
+    e.preventDefault();
+    settingsWindow.hide();
+  });
+
+  ipcMain.on("resize-settings-page", () => {
+    settingsWindow.maximize();
+  });
+
+  ipcMain.on("delete-line", (event, params) => {
+    const { param1, param2 } = params;
+
+    db.run("DELETE FROM Etapes WHERE ID = ?", param1, function (err) {
+      if (err) {
+        console.error(err.message);
+      } else {
+        console.log(`Ligne avec l'ID ${param1} supprimée de la table recette`);
+      }
+    });
+  });
+
   ipcMain.handle("add-data-to-db", async (event, data) => {
     return new Promise((resolve, reject) => {
-      const { name, description, temps } = data;
+      const { title, category } = data;
+
+      console.log("befor " + title, category);
+
       db.run(
-        "INSERT INTO Recettes (Nom, Description, Temps) VALUES (?, ?, ?)",
-        [name, description, temps],
+        "INSERT INTO build_order (title, category_id) VALUES (?, ?);",
+        [title, category],
         function (err) {
           if (err) {
             reject(err.message);
           } else {
-            console.log(name, description, temps);
-            mainWindow.webContents.emit("data-added");
+            console.log("title : " + title, "category : " + category);
+            settingsWindow.webContents.send("data-added");
             resolve({ success: true, message: "Data added successfully" });
           }
         }

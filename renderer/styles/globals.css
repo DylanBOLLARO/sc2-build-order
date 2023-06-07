@@ -7,17 +7,5 @@
 }
 
 body{
-  @apply  select-none;
-}
-
-.category1 {
-  color: red;
-}
-
-.category2 {
-  color: blue;
-}
-
-.category3 {
-  color: green;
+  @apply select-none;
 }
