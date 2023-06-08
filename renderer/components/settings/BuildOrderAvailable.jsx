@@ -29,13 +29,8 @@ function BuildOrderAvailable({ data, handleDataAdded, allCategories }) {
   };
 
   useEffect(() => {
-    console.log("Composant played data-added");
-
-    // Abonnez-vous à l'événement de données ajoutées
     ipcRenderer.on("data-added", handleDataAdded);
-
     return () => {
-      // Nettoyage de l'abonnement à l'événement lors du démontage du composant
       ipcRenderer.off("data-added", handleDataAdded);
     };
   }, []);
@@ -173,8 +168,8 @@ function BuildOrderAvailable({ data, handleDataAdded, allCategories }) {
                               router.push({
                                 pathname: "/settings/ViewAndChange",
                                 query: {
-                                  selectedCategories: selectedCategories,
                                   title: row.title,
+                                  id: row.id,
                                 },
                               });
                             }}

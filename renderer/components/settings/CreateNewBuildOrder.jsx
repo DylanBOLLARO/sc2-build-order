@@ -40,7 +40,7 @@ const CreateNewBuildOrder = ({
       try {
         await ipcRenderer.invoke("add-data-to-db", {
           title: localBuild.title,
-          category: localBuild.category,
+          category: localBuild.category + 1,
         });
 
         updateLocalBuild("title", "");
@@ -108,44 +108,6 @@ const CreateNewBuildOrder = ({
           Go to creation page
         </Button>
       </div>
-
-      {/* <form onSubmit={handleFormSubmit} aria-label="Form" className="w-full">
-        <div className="flex w-full flex-row justify-between gap-5 py-5">
-          <Input
-            css={{ width: "100%" }}
-            placeholder="title"
-            value={localBuild.title}
-            onChange={(e) => updateLocalBuild("title", e.target.value)}
-            size="xl"
-            aria-label="Nom input"
-          />
-          <Input
-            css={{ width: "100%" }}
-            placeholder="category"
-            value={localBuild.category}
-            onChange={(e) => updateLocalBuild("category", e.target.value)}
-            size="xl"
-            aria-label="Temps input"
-          /> */}
-      {/* <Input
-            css={{ width: "100%" }}
-            placeholder="Description"
-            value={localBuild.Description}
-            onChange={(e) => updateLocalBuild("Description", e.target.value)}
-            size="xl"
-            aria-label="Description input"
-          /> */}
-      {/* <Button
-            size="lg"
-            type="submit"
-            color={"warning"}
-            flat
-            aria-label="Add build order button"
-          >
-            Save line
-          </Button>
-        </div>
-      </form> */}
     </div>
   );
 };

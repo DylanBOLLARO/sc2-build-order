@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/router";
-import buildOrder from "../buildOrder.json";
 import Layout from "../components/Layout";
 import { ipcRenderer } from "electron";
 import Image from "next/image";
@@ -13,21 +12,21 @@ function Home() {
     ipcRenderer.on("num7", () => {
       router.push({
         pathname: "/OpponentRace",
-        query: { racePlayed: "terran" },
+        query: { racePlayed: "t" },
       });
     });
 
     ipcRenderer.on("num8", () => {
       router.push({
         pathname: "/OpponentRace",
-        query: { racePlayed: "zerg" },
+        query: { racePlayed: "z" },
       });
     });
 
     ipcRenderer.on("num9", () => {
       router.push({
         pathname: "/OpponentRace",
-        query: { racePlayed: "protoss" },
+        query: { racePlayed: "p" },
       });
     });
 
@@ -43,10 +42,12 @@ function Home() {
     };
   }, []);
 
+  const buildOrder= [{name:"terran"},{name:"zerg"},{name:"protoss"}]
+  
   return (
     <Layout title={"Sir, choose your race !"}>
       <div className="flex justify-between gap-2 overflow-hidden">
-        {buildOrder.race.map((category, index) => (
+        {buildOrder.map((category, index) => (
           <div
             className="flew-row relative flex w-full cursor-default items-center justify-around rounded-lg bg-black/50 p-3"
             key={category.name}

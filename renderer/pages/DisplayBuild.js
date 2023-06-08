@@ -1,7 +1,5 @@
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/router";
-import Link from "next/link";
-import buildOrder from "../buildOrder.json";
 import Layout from "../components/Layout";
 import { useSelector } from "react-redux";
 import { ipcRenderer } from "electron";
@@ -12,10 +10,6 @@ function DisplayBuild() {
   const count = useSelector((state) => state.counter.value);
 
   const [switchColor, setSwitchColor] = useState(false);
-
-  const path = buildOrder.matchup.find(
-    (x) => x.slugmatchup == query.racePlayed + "vs" + query.raceOpponent
-  ).build[query.build];
 
   useEffect(() => {
     ipcRenderer.on("num5", () => {
@@ -33,19 +27,38 @@ function DisplayBuild() {
       ipcRenderer.removeAllListeners("num5");
     };
   }, []);
+  const [data, setData] = useState([]);
 
   useEffect(() => {
-    if (
-      JSON.stringify(
-        path.recette.filter((x) => count == x.timer)[0] &&
-          path.recette.filter((x) => count == x.timer)[0].timer == count
-      )
-    ) {
-      setSwitchColor(true);
-    } else {
-      setSwitchColor(false);
-    }
-  }, [count]);
+    console.log(`Build : ${query.build}`);
+    (async () => {
+      try {
+        const newData = await ipcRenderer.invoke(
+          "db-query",
+          `SELECT * FROM etapes WHERE build_order_id =${query.build};`
+        );
+        if (data !== newData) {
+          setData(newData);
+          console.log("data of display : " + JSON.stringify(newData));
+        }
+      } catch (error) {
+        console.error(error);
+      }
+    })();
+  }, []);
+
+  // useEffect(() => {
+  //   if (
+  //     JSON.stringify(
+  //       path.recette.filter((x) => count == x.timer)[0] &&
+  //         path.recette.filter((x) => count == x.timer)[0].timer == count
+  //     )
+  //   ) {
+  //     setSwitchColor(true);
+  //   } else {
+  //     setSwitchColor(false);
+  //   }
+  // }, [count]);
 
   const formatTemps = (temps) => {
     const minutes = Math.floor(temps / 60);
@@ -56,26 +69,26 @@ function DisplayBuild() {
   };
 
   return (
-    <Layout title={path.name}>
+    <Layout title={"path.name"}>
       <div className={`flex flex-col gap-1`}>
-        {path.recette
+        {data
           .slice(
-            Math.max(path.recette.filter((x) => count > x.timer).length - 2, 0),
+            Math.max(data.filter((x) => count > x.timer).length - 2, 0),
             Math.min(
-              path.recette.filter((x) => count > x.timer).length + 6,
-              path.recette.length
+              data.filter((x) => count > x.timer).length + 6,
+              data.length
             )
           )
           .map((u, index) => (
-            <div className="bg-black/50 rounded">
+            <div className="rounded bg-black/50">
               {u.details && (
-                <div className="flex flex-row text-[#a878dd] py-1 px-3 w-full">
-                  <p className=" text-center w-full ">{u.details}</p>
+                <div className="flex w-full flex-row px-3 py-1 text-[#a878dd]">
+                  <p className=" w-full text-center ">{u.details}</p>
                 </div>
               )}
-              <div className="flex flex-row text-lg gap-1">
+              <div className="flex flex-row gap-1 text-lg">
                 <div
-                  className={`flex flex-row py-1 justify-between items-center w-3/12`}
+                  className={`flex w-3/12 flex-row items-center justify-between py-1`}
                 >
                   <p className="w-1/2 text-center text-[#61afe4]">
                     {u.population}
@@ -85,29 +98,26 @@ function DisplayBuild() {
                   </p>
                 </div>
                 <div
-                  className={`flex w-9/12  px-3 justify-between items-center`}
+                  className={`flex w-9/12  items-center justify-between px-3`}
                 >
                   <p
                     className={`text-left text-[#98c379] ${
                       index ==
-                        path.recette
+                        data
                           .slice(
                             Math.max(
-                              path.recette.filter((x) => count > x.timer)
-                                .length - 2,
-                              0
+                              data.filter((x) => count > x.timer).length - 2
                             ),
                             Math.min(
-                              path.recette.filter((x) => count > x.timer)
-                                .length + 6,
-                              path.recette.length
+                              data.filter((x) => count > x.timer).length + 6,
+                              data.length
                             )
                           )
                           .filter((x) => count > x.timer).length &&
                       "text-[#e5c07b]"
                     }`}
                   >
-                    {u.description}
+                    {u.content}
                   </p>
                 </div>
               </div>
