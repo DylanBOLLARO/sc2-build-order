@@ -1,69 +1,25 @@
-# Display
+# Description
 
-# Settings
+sc2-build-order is a PC application which allows during an sc2 game to display a build order on the screen in superposition (like the discord interface with a transparency), in this way the player no longer has need to do alt-tabs or look at a second screen.
 
-# Database structure
+![Alt text](/documentation/interfaceJoueur.png "Optional title")
 
-Simple overview of use/purpose.
+# Use
 
-## Description
+The interface consists of two parts, the first is the display of the build order, where you must first have selected the race played, the race of the opponent and the build order that you want to do. Then just start the stopwatch, the spot to be made will be orange, the others green, the system leaves the last two spots so that if the players are slightly late they can still follow the soundtrack, there is also the ability to pause the timer (see shortcuts).
 
-An in-depth paragraph about your project and overview of use.
+![Alt text](/documentation/inGameView.png "Optional title")
 
-## Getting Started
+The second part and an interface allowing the creation of build order, the modifications and the deletion.
 
-### Dependencies
+![Alt text](/documentation/settings.png "Optional title")
 
-- Describe any prerequisites, libraries, OS version, etc., needed before installing program.
-- ex. Windows 10
+# Shortcuts
 
-### Installing
+The application is controlled by 5 main keys, num 5 to num 9.
 
-- How/where to download your program
-- Any modifications needed to be made to files/folders
-
-### Executing program
-
-- How to run the program
-- Step-by-step bullets
-
-```
-code blocks for commands
-```
-
-## Help
-
-Any advise for common problems or issues.
-
-```
-command to run if program contains helper info
-```
-
-## Authors
-
-Contributors names and contact info
-
-ex. Dominique Pizzie  
-ex. [@DomPizzie](https://twitter.com/dompizzie)
-
-## Version History
-
-- 0.2
-  - Various bug fixes and optimizations
-  - See [commit change]() or See [release history]()
-- 0.1
-  - Initial Release
-
-## License
-
-This project is licensed under the [NAME HERE] License - see the LICENSE.md file for details
-
-## Acknowledgments
-
-Inspiration, code snippets, etc.
-
-- [awesome-readme](https://github.com/matiassingers/awesome-readme)
-- [PurpleBooth](https://gist.github.com/PurpleBooth/109311bb0361f32d87a2)
-- [dbader](https://github.com/dbader/readme-template)
-- [zenorocha](https://gist.github.com/zenorocha/4526327)
-- [fvcproductions](https://gist.github.com/fvcproductions/1bfc2d4aecb01a834b46)
+num5= backspace
+num6= show or hide player interface
+num7= select terran // previous build // start or stop the timer
+num8= select zerg // select build // reset timer
+num9= select protoss // next build

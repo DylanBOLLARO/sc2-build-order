@@ -207,58 +207,68 @@ if (isProd) {
       }
     );
 
-    // db.get(
-    //   `SELECT name FROM sqlite_master WHERE type='table' AND name=?`,
-    //   ["etapes"],
-    //   async (err, row) => {
-    //     if (err) {
-    //       console.error(err.message);
-    //       return;
-    //     }
-    //     if (row) {
-    //       console.log(`La table etapes existe.`);
-    //     } else {
-    //       try {
-    //         await new Promise<void>((resolve, reject) => {
-    //           db.run(
-    //             `CREATE TABLE IF NOT EXISTS etapes (
-    //               id_etapes INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
-    //               content TEXT,
-    //             );`,
-    //             (err) => {
-    //               if (err) {
-    //                 console.error(err.message);
-    //                 reject(err);
-    //               } else {
-    //                 console.log("CREATE recipes etapes");
-    //                 resolve();
-    //               }
-    //             }
-    //           );
-    //         });
+    db.get(
+      `SELECT name FROM sqlite_master WHERE type='table' AND name=?`,
+      ["etapes"],
+      async (err, row) => {
+        if (err) {
+          console.error(err.message);
+          return;
+        }
+        if (row) {
+          console.log(`La table etapes existe.`);
+        } else {
+          try {
+            await new Promise<void>((resolve, reject) => {
+              db.run(
+                `CREATE TABLE IF NOT EXISTS etapes (
+                  id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+                  content TEXT,
+                  population INTEGER,
+                  timer INTEGER,
+                  build_order_id INTEGER,
+                  FOREIGN KEY (build_order_id) REFERENCES build_order(id) ON DELETE SET NULL
+                );`,
+                (err) => {
+                  if (err) {
+                    console.error(err.message);
+                    reject(err);
+                  } else {
+                    console.log("CREATE etapes TABLE");
+                    resolve();
+                  }
+                }
+              );
+            });
 
-    //         await new Promise<void>((resolve, reject) => {
-    //           db.run(
-    //             `INSERT INTO recipes (title, category_id)
-    //             VALUES
-    //                 ('Crême anglaise', 2),
-    //                 ('Soupe', 1),
-    //                 ('Salade de fruit', 2);`,
-    //             (err) => {
-    //               if (err) {
-    //                 console.error(err.message);
-    //                 process.exit(1);
-    //               }
-    //               console.log("INSERT recipes DATA");
-    //             }
-    //           );
-    //         });
-    //       } catch (error) {
-    //         console.error("An error occurred:", error);
-    //       }
-    //     }
-    //   }
-    // );
+            await new Promise<void>((resolve, reject) => {
+              db.run(
+                `INSERT INTO etapes (build_order_id, content, population, timer)
+                VALUES
+                    ('1', "faire un VCS", 12, 0),
+                    ('1', "Faire un dépot", 14, 5),
+                    ('1', "Faire une caserne", 20, 10),
+                    ('2', "faire un VCS",50,50),
+                    ('2', "Faire un dépot",60,60),
+                    ('2', "Faire une caserne",78,78),
+                    ('3', "faire un VCS",4,4),
+                    ('3', "Faire un dépot",5,5),
+                    ('3', "Faire une caserne",6,6);`,
+                (err) => {
+                  if (err) {
+                    console.error(err.message);
+                    process.exit(1);
+                  }
+                  console.log("INSERT etapes DATA");
+                }
+              );
+            });
+          } catch (error) {
+            console.error("An error occurred:", error);
+          }
+        }
+      }
+    );
   });
 
   ipcMain.handle("db-query", async (event, sqlQuery) => {
@@ -310,9 +320,6 @@ if (isProd) {
   ipcMain.handle("add-data-to-db", async (event, data) => {
     return new Promise((resolve, reject) => {
       const { title, category } = data;
-
-      console.log("befor " + title, category);
-
       db.run(
         "INSERT INTO build_order (title, category_id) VALUES (?, ?);",
         [title, category],
@@ -322,6 +329,26 @@ if (isProd) {
           } else {
             console.log("title : " + title, "category : " + category);
             settingsWindow.webContents.send("data-added");
+            resolve({ success: true, message: "Data added successfully" });
+          }
+        }
+      );
+    });
+  });
+
+  ipcMain.handle("add-line-build-order-to-db", async (event, data) => {
+    return new Promise((resolve, reject) => {
+      const { timer, population, content, build_order_id } = data;
+      db.run(
+        "INSERT INTO etapes (timer, population,content,build_order_id  ) VALUES (?, ?,?,?);",
+        [timer, population, content, build_order_id],
+        function (err) {
+          if (err) {
+            console.log("fail");
+            reject(err.message);
+          } else {
+            console.log("succes");
+            settingsWindow.webContents.send("data-line-added");
             resolve({ success: true, message: "Data added successfully" });
           }
         }

@@ -1,7 +1,6 @@
 import { useRouter } from "next/router";
 import React, { useEffect } from "react";
 import Layout from "../components/Layout";
-import buildOrder from "../buildOrder.json";
 import { ipcRenderer } from "electron";
 import colorName from "../constants/colors";
 import Image from "next/image";
@@ -14,21 +13,21 @@ export default function ProductScreen() {
     ipcRenderer.on("num7", () => {
       router.push({
         pathname: "/ChoseBuild",
-        query: { racePlayed: query.racePlayed, raceOpponent: "terran" },
+        query: { racePlayed: query.racePlayed, raceOpponent: "t" },
       });
     });
 
     ipcRenderer.on("num8", () => {
       router.push({
         pathname: "/ChoseBuild",
-        query: { racePlayed: query.racePlayed, raceOpponent: "zerg" },
+        query: { racePlayed: query.racePlayed, raceOpponent: "z" },
       });
     });
 
     ipcRenderer.on("num9", () => {
       router.push({
         pathname: "/ChoseBuild",
-        query: { racePlayed: query.racePlayed, raceOpponent: "protoss" },
+        query: { racePlayed: query.racePlayed, raceOpponent: "p" },
       });
     });
 
@@ -44,15 +43,17 @@ export default function ProductScreen() {
     };
   }, []);
 
+  const buildOrder = [
+    { name: "terran" },
+    { name: "zerg" },
+    { name: "protoss" },
+  ];
+
   return (
-    <Layout
-      title={`Dear ${
-        query.racePlayed.charAt().toUpperCase() + query.racePlayed.slice(1)
-      }, select the opposing race !`}
-    >
+    <Layout title={`Dear select the opposing race !`}>
       <div className="row flex justify-between gap-2 overflow-hidden">
-        {buildOrder.race &&
-          buildOrder.race.map((race, index) => (
+        {buildOrder &&
+          buildOrder.map((race, index) => (
             <div
               className="flew-row relative flex w-full cursor-default items-center justify-around rounded-lg bg-black/50 p-3"
               key={race.name}
