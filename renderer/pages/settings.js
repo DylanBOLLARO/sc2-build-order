@@ -6,7 +6,8 @@ import { ipcRenderer } from "electron";
 
 const settings = () => {
   const [dataAdded, setDataAdded] = useState(false);
-  const [data, setData] = useState("");
+  const [data, setData] = useState(null);
+  const [allCategories, setAllCategories] = useState(null);
   const [localBuild, setLocalBuild] = useState({
     title: "",
     category: "",
@@ -49,8 +50,6 @@ const settings = () => {
       ipcRenderer.off("data-added", handleDataAdded);
     };
   }, []);
-
-  const [allCategories, setAllCategories] = useState(null);
 
   useEffect(() => {
     (async () => {

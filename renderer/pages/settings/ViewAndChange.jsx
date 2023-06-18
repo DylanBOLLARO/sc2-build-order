@@ -93,21 +93,6 @@ function ViewAndChange() {
     console.log("data : " + JSON.stringify(data));
   }, [dataAdded]);
 
-  const saveLine = async (bo) => {
-    try {
-      const data = await ipcRenderer.invoke(
-        "db-query",
-        `INSERT INTO etapes (build_order_id, content, population, timer)
-                VALUES
-                    ('1', "TEST", 12, 0);`
-      );
-      setData(data);
-      console.log("data : " + JSON.stringify(data));
-    } catch (error) {
-      console.error(error);
-    }
-  };
-
   return (
     <div className="m-0 min-h-screen bg-white p-0">
       <LayoutSettings>
@@ -152,7 +137,27 @@ function ViewAndChange() {
 
                       <Table.Cell>
                         <div className="flex flex-row justify-center gap-3">
-                          <button onClick={{}}>
+                          <button
+                            onClick={async () => {
+                              console.log("pressed");
+                              console.log("id etapes :" + item.id);
+                              console.log("id build order :" + query.id);
+
+                              try {
+                                const newData = await ipcRenderer.invoke(
+                                  "db-query",
+                                  `DELETE FROM etapes WHERE build_order_id=${query.id} AND id=${item.id};`
+                                );
+                                updateLineOfBuild();
+
+                                console.log(
+                                  "data : " + JSON.stringify(newData)
+                                );
+                              } catch (error) {
+                                console.error(error);
+                              }
+                            }}
+                          >
                             <div className="rounded-lg text-[#e06c75] duration-75 hover:bg-zinc-200">
                               <AiFillDelete size={28} />
                             </div>

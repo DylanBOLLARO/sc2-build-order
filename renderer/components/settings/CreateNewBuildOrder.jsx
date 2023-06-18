@@ -78,9 +78,9 @@ const CreateNewBuildOrder = ({
             color="success"
           >
             {allCategories &&
-              allCategories.map((category) => {
+              allCategories.map((category, index) => {
                 return (
-                  <Radio isSquared value={category.title}>
+                  <Radio isSquared value={category.title} key={index}>
                     {category.title}
                   </Radio>
                 );
@@ -105,7 +105,7 @@ const CreateNewBuildOrder = ({
           aria-label="Add build order button"
           onPress={handleFormSubmit}
         >
-          Go to creation page
+          Insert build
         </Button>
       </div>
     </div>

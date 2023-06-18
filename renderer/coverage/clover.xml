@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<coverage generated="1686424214386" clover="3.2.0">
-  <project timestamp="1686424214386" name="All files">
+<coverage generated="1686455000826" clover="3.2.0">
+  <project timestamp="1686455000826" name="All files">
     <metrics statements="5" coveredstatements="5" conditionals="1" coveredconditionals="1" methods="3" coveredmethods="3" elements="9" coveredelements="9" complexity="0" loc="5" ncloc="5" packages="2" files="2" classes="2"/>
     <package name="__test__">
       <metrics statements="4" coveredstatements="4" conditionals="1" coveredconditionals="1" methods="2" coveredmethods="2"/>
-      <file name="test-utils.js" path="C:\Users\bolla\workspace\sc2-build-order\renderer\__test__\test-utils.js">
+      <file name="test-utils.js" path="C:\Users\BOLLARO\Full-Stack\sc2-build-order\renderer\__test__\test-utils.js">
         <metrics statements="4" coveredstatements="4" conditionals="1" coveredconditionals="1" methods="2" coveredmethods="2"/>
         <line num="4" count="1" type="stmt"/>
         <line num="5" count="1" type="stmt"/>
@@ -14,7 +14,7 @@
     </package>
     <package name="pages">
       <metrics statements="1" coveredstatements="1" conditionals="0" coveredconditionals="0" methods="1" coveredmethods="1"/>
-      <file name="index.js" path="C:\Users\bolla\workspace\sc2-build-order\renderer\pages\index.js">
+      <file name="index.js" path="C:\Users\BOLLARO\Full-Stack\sc2-build-order\renderer\pages\index.js">
         <metrics statements="1" coveredstatements="1" conditionals="0" coveredconditionals="0" methods="1" coveredmethods="1"/>
         <line num="2" count="1" type="stmt"/>
       </file>

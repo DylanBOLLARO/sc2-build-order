@@ -1,11 +1,11 @@
-import { app, globalShortcut, BrowserWindow, ipcMain } from "electron";
+import { app, globalShortcut, BrowserWindow, ipcMain, dialog } from "electron";
 import serve from "electron-serve";
 import { createWindow } from "./helpers";
 import * as sqlite3 from "sqlite3";
 import * as path from "path";
+import fs from "fs";
 
 const dbFilePath = path.join(__dirname, "database");
-
 const isProd = process.env.NODE_ENV === "production";
 
 let mainWindow = null;
@@ -24,7 +24,7 @@ if (isProd) {
     width: 400,
     height: 800,
     x: 0,
-    y: 50,
+    y: 0,
     fullscreen: false,
     resizable: false,
     autoHideMenuBar: true,
@@ -373,6 +373,52 @@ if (isProd) {
         }
       );
     });
+  });
+
+  // Export JSON file
+  ipcMain.on("export-json", (event, jsonData) => {
+    const filePath = dialog.showSaveDialogSync(mainWindow, {
+      title: jsonData.title,
+      defaultPath: jsonData.title.trim().replace(/\s/g, ""),
+      filters: [{ name: "JSON", extensions: ["json"] }],
+    });
+
+    if (filePath) {
+      const jsonString = JSON.stringify(jsonData.buildOrder);
+
+      fs.writeFile(filePath, jsonString, (err) => {
+        if (err) {
+          console.error("Error writing JSON file:", err);
+          mainWindow.webContents.send("export-json-reply", { success: false });
+        } else {
+          console.log("JSON file exported successfully:", filePath);
+          mainWindow.webContents.send("export-json-reply", { success: true });
+        }
+      });
+    } else {
+      mainWindow.webContents.send("export-json-reply", { success: false });
+    }
+  });
+
+  // Import JSON file
+  ipcMain.on("import-json", (event, jsonData) => {
+    console.log("back ok");
+
+    const filePath = dialog.showOpenDialogSync(mainWindow);
+
+    console.log(filePath[0]);
+
+    fs.readFile;
+    if (filePath) {
+      console.log("we get data from file path");
+
+      fs.readFile(filePath[0], "utf8", (err, data) => {
+        if (err) throw err;
+        console.log(data);
+      });
+    } else {
+      mainWindow.webContents.send("export-json-reply", { success: false });
+    }
   });
 })();
 

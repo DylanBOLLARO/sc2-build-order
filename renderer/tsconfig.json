@@ -23,7 +23,7 @@
     "next-env.d.ts",
     "**/*.ts",
     "**/*.tsx"
-  ],
+, "functions/dataToExport.jsx"  ],
   "exclude": [
     "node_modules"
   ]

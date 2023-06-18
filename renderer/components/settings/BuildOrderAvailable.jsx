@@ -5,27 +5,36 @@ import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { AiFillDelete } from "react-icons/ai";
 import { BiShow } from "react-icons/bi";
+import { BsFillArrowUpRightSquareFill } from "react-icons/bs";
+import dataToExport from "../../functions/dataToExport";
+import dataToImport from "../../functions/dataToImport";
 
 function BuildOrderAvailable({ data, handleDataAdded, allCategories }) {
   const router = useRouter();
   const { query } = useRouter();
 
   const [selectedCategories, setSelectedCategories] = useState([]);
+  const [visible, setVisible] = useState(false);
+  const [targetId, setTargetId] = useState(null);
 
-  // const [selectedItem, setSelectedItem] = useState(null);
-  const [visible, setVisible] = useState({ visible: false, title: "" });
-
-  const updateState = (visible, title) => {
-    setVisible({ visible, title });
-  };
-
-  const closeHandler = () => {
-    setVisible({ visible: false, title: "" });
+  const closeHandler = async () => {
+    setVisible(false);
     console.log("closed");
   };
 
-  const handler = (text) => {
-    updateState(true, text);
+  const deleteHandler = async () => {
+    setVisible(false);
+    console.log("deleted");
+    try {
+      const newData = await ipcRenderer.invoke(
+        "db-query",
+        `DELETE FROM build_order WHERE id=${targetId};`
+      );
+      console.log("data : " + JSON.stringify(newData));
+    } catch (error) {
+      console.error(error);
+    }
+    handleDataAdded();
   };
 
   useEffect(() => {
@@ -65,7 +74,7 @@ function BuildOrderAvailable({ data, handleDataAdded, allCategories }) {
         animated
         preventClose
         aria-labelledby="modal-title"
-        open={visible.visible}
+        open={visible}
         onClose={closeHandler}
       >
         <Modal.Header>
@@ -84,23 +93,37 @@ function BuildOrderAvailable({ data, handleDataAdded, allCategories }) {
           <Button auto onPress={closeHandler}>
             Cancel
           </Button>
-          <Button auto flat color="error" onPress={closeHandler}>
+          <Button auto flat color="error" onPress={deleteHandler}>
             Delete
           </Button>
         </Modal.Footer>
       </Modal>
-      <p className="w-full py-4 text-left font-mono text-lg">
-        List of all build order available
-      </p>
+      <div className="flex w-full flex-row justify-between py-4">
+        <p className="w-full text-left font-mono text-lg">
+          List of all build order available
+        </p>
+
+        <Button
+          color={"secondary"}
+          flat
+          onPress={() => {
+            console.log("Try to import build order");
+            dataToImport();
+          }}
+        >
+          Import build
+        </Button>
+      </div>
+
       <div className="w-full">
         <Grid.Container
           gap={2}
           css={{ width: "100%", justifyContent: "center" }}
         >
           {allCategories &&
-            allCategories.map((category) => {
+            allCategories.map((category, index) => {
               return (
-                <Grid>
+                <Grid key={index}>
                   <p className="text-center">{category.title}</p>
                   <Switch
                     color={"default"}
@@ -178,9 +201,37 @@ function BuildOrderAvailable({ data, handleDataAdded, allCategories }) {
                               <BiShow size={28} />
                             </div>
                           </button>
-                          <button onClick={() => handler(row.title)}>
+                          <button
+                            onClick={() => {
+                              setVisible(true);
+                              setTargetId(row.id);
+                            }}
+                          >
                             <div className="rounded-lg text-[#e06c75] duration-75 hover:bg-zinc-200">
                               <AiFillDelete size={28} />
+                            </div>
+                          </button>
+
+                          <button
+                            onClick={() => {
+                              (async () => {
+                                try {
+                                  const newData = await ipcRenderer.invoke(
+                                    "db-query",
+                                    `SELECT * FROM etapes WHERE build_order_id=${row.id};`
+                                  );
+                                  dataToExport(row.title, newData);
+                                } catch (error) {
+                                  console.error(error);
+                                }
+                              })();
+                            }}
+                          >
+                            <div className="rounded-lg text-[#61afe4] duration-75 hover:bg-zinc-200">
+                              <BsFillArrowUpRightSquareFill
+                                size={24}
+                                color="#89be79"
+                              />
                             </div>
                           </button>
                         </div>
