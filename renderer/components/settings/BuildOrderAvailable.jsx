@@ -15,16 +15,19 @@ function BuildOrderAvailable({ data, handleDataAdded, allCategories }) {
 
   const [selectedCategories, setSelectedCategories] = useState([]);
   const [visible, setVisible] = useState(false);
+  const [visible2, setVisible2] = useState(false);
   const [targetId, setTargetId] = useState(null);
 
   const closeHandler = async () => {
     setVisible(false);
+    setVisible2(false);
     console.log("closed");
   };
 
   const deleteHandler = async () => {
     setVisible(false);
     console.log("deleted");
+
     try {
       const newData = await ipcRenderer.invoke(
         "db-query",
@@ -34,6 +37,7 @@ function BuildOrderAvailable({ data, handleDataAdded, allCategories }) {
     } catch (error) {
       console.error(error);
     }
+
     handleDataAdded();
   };
 
@@ -98,6 +102,23 @@ function BuildOrderAvailable({ data, handleDataAdded, allCategories }) {
           </Button>
         </Modal.Footer>
       </Modal>
+
+      <Modal
+        closeButton
+        aria-labelledby="modal-title"
+        open={visible2}
+        onClose={closeHandler}
+      >
+        <Modal.Header>
+          <Text id="modal-title" size={18}>
+            Welcome to
+            <Text b size={18}>
+              NextUI
+            </Text>
+          </Text>
+        </Modal.Header>
+      </Modal>
+
       <div className="flex w-full flex-row justify-between py-4">
         <p className="w-full text-left font-mono text-lg">
           List of all build order available
@@ -107,8 +128,8 @@ function BuildOrderAvailable({ data, handleDataAdded, allCategories }) {
           color={"secondary"}
           flat
           onPress={() => {
-            console.log("Try to import build order");
             dataToImport();
+            setVisible2(true);
           }}
         >
           Import build
@@ -214,13 +235,18 @@ function BuildOrderAvailable({ data, handleDataAdded, allCategories }) {
 
                           <button
                             onClick={() => {
+                              console.log("row : " + JSON.stringify(row));
                               (async () => {
                                 try {
                                   const newData = await ipcRenderer.invoke(
                                     "db-query",
                                     `SELECT * FROM etapes WHERE build_order_id=${row.id};`
                                   );
-                                  dataToExport(row.title, newData);
+                                  dataToExport(
+                                    row.title,
+                                    newData,
+                                    row.category
+                                  );
                                 } catch (error) {
                                   console.error(error);
                                 }

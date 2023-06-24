@@ -1,5 +1,5 @@
 import { ipcRenderer } from "electron";
-import React from "react";
+import { Modal } from "@nextui-org/react";
 
 async function dataToImport() {
   ipcRenderer.send("import-json");

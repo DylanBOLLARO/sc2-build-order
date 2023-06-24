@@ -1,9 +1,9 @@
 import { ipcRenderer } from "electron";
-import React from "react";
 
-async function dataToExport(title, data) {
+async function dataToExport(title, data, category) {
   const jsonData = {
     buildOrder: data,
+    category: category,
     title: title,
   };
 
