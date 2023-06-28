@@ -30,7 +30,7 @@ function Home() {
       });
     });
 
-    ipcRenderer.on("num5", () => {
+    ipcRenderer.on("Ctrl+Shift+A", () => {
       ipcRenderer.send("show-settings");
     });
 
@@ -38,7 +38,7 @@ function Home() {
       ipcRenderer.removeAllListeners("num7");
       ipcRenderer.removeAllListeners("num8");
       ipcRenderer.removeAllListeners("num9");
-      ipcRenderer.removeAllListeners("num5");
+      ipcRenderer.removeAllListeners("Ctrl+Shift+A");
     };
   }, []);
 

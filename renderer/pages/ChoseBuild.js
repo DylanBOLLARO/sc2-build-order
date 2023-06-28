@@ -72,7 +72,7 @@ export default function ProductScreen() {
       incCounter();
     });
 
-    ipcRenderer.on("num5", async () => {
+    ipcRenderer.on("Ctrl+Shift+A", async () => {
       router.push({
         pathname: "/OpponentRace",
         query: { racePlayed: query.racePlayed },
@@ -83,7 +83,7 @@ export default function ProductScreen() {
       ipcRenderer.removeAllListeners("num7");
       ipcRenderer.removeAllListeners("num8");
       ipcRenderer.removeAllListeners("num9");
-      ipcRenderer.removeAllListeners("num5");
+      ipcRenderer.removeAllListeners("Ctrl+Shift+A");
     };
   }, [selectedBuild]);
 

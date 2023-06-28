@@ -12,7 +12,7 @@ function DisplayBuild() {
   const [switchColor, setSwitchColor] = useState(false);
 
   useEffect(() => {
-    ipcRenderer.on("num5", () => {
+    ipcRenderer.on("Ctrl+Shift+A", () => {
       router.push({
         pathname: "/ChoseBuild",
         query: {
@@ -24,7 +24,7 @@ function DisplayBuild() {
     });
 
     return () => {
-      ipcRenderer.removeAllListeners("num5");
+      ipcRenderer.removeAllListeners("Ctrl+Shift+A");
     };
   }, []);
   const [data, setData] = useState([]);

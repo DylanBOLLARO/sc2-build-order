@@ -1,17 +1,26 @@
-import { app, globalShortcut, ipcMain } from "electron";
+import { BrowserWindow, app, globalShortcut, ipcMain } from "electron";
 import serve from "electron-serve";
 import { createWindow } from "./helpers";
 import * as sqlite3 from "sqlite3";
 import * as path from "path";
+import * as fs from "fs";
 import { exportJSON } from "./functions/exportJSON";
 import { importJSON } from "./functions/importJSON";
 import { databaseCreation } from "./functions/databaseCreation";
 
-const dbFilePath = path.join(__dirname, "database");
+const customPathMain = path.join(app.getAppPath(), "main");
 const isProd = process.env.NODE_ENV === "production";
 
-let mainWindow = null;
-let settingsWindow = null;
+let mainWindow: BrowserWindow,
+  settingsWindow: BrowserWindow,
+  dbFilePath: string = null;
+
+(async () => {
+  if (!fs.existsSync(customPathMain + "/db")) {
+    await fs.promises.mkdir(customPathMain + "/db", { recursive: true });
+  }
+  dbFilePath = path.join(customPathMain + "/db", "database");
+})();
 
 if (isProd) {
   serve({ directory: "app" });
@@ -44,6 +53,7 @@ if (isProd) {
     minWidth: 700,
     show: false,
     autoHideMenuBar: true,
+    backgroundColor: "#27272a",
   });
 
   settingsWindow.center();
@@ -64,33 +74,34 @@ if (isProd) {
   }
 
   ipcMain.on("show-settings", () => {
+    globalShortcut.unregisterAll();
     settingsWindow.show();
   });
+
+  // Attribution des shortcuts
+  const [openSettings, hide, one, two, tree] = [
+    "Ctrl+Shift+A",
+    "num6",
+    "num7",
+    "num8",
+    "num9",
+  ];
+
+  const arrayGlobalShortcut = [openSettings, hide, one, two, tree];
+
+  function registerGlobalShortcut(key) {
+    globalShortcut.register(key, () => {
+      mainWindow.webContents.send(key);
+    });
+  }
 
   settingsWindow.on("close", (event) => {
     event.preventDefault();
     settingsWindow.hide();
+    arrayGlobalShortcut.map((shortcut) => registerGlobalShortcut(shortcut));
   });
 
-  globalShortcut.register("num7", () => {
-    mainWindow.webContents.send("num7", "Touche num7");
-  });
-
-  globalShortcut.register("num8", () => {
-    mainWindow.webContents.send("num8", "Touche num8");
-  });
-
-  globalShortcut.register("num9", () => {
-    mainWindow.webContents.send("num9", "Touche num9");
-  });
-
-  globalShortcut.register("num5", () => {
-    mainWindow.webContents.send("num5", "Touche num5");
-  });
-
-  globalShortcut.register("num6", () => {
-    mainWindow.webContents.send("num6", "Touche num6");
-  });
+  arrayGlobalShortcut.map((shortcut) => registerGlobalShortcut(shortcut));
 
   const db = new sqlite3.Database(dbFilePath, (err) => {
     if (err) {

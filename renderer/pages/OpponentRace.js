@@ -31,7 +31,7 @@ export default function ProductScreen() {
       });
     });
 
-    ipcRenderer.on("num5", () => {
+    ipcRenderer.on("Ctrl+Shift+A", () => {
       router.push("/home");
     });
 
@@ -39,7 +39,7 @@ export default function ProductScreen() {
       ipcRenderer.removeAllListeners("num7");
       ipcRenderer.removeAllListeners("num8");
       ipcRenderer.removeAllListeners("num9");
-      ipcRenderer.removeAllListeners("num5");
+      ipcRenderer.removeAllListeners("Ctrl+Shift+A");
     };
   }, []);
 

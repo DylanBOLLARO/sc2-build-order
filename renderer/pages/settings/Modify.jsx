@@ -94,8 +94,8 @@ function ViewAndChange() {
   }, [dataAdded]);
 
   return (
-    <div className="m-0 min-h-screen bg-white p-0">
-      <LayoutSettings>
+    <div className="m-0 p-0">
+      <LayoutSettings title={"Modify build order"}>
         <div className="px-10">
           <Text
             h1
@@ -229,16 +229,16 @@ function ViewAndChange() {
               </Grid>
             </Grid.Container>
           </div>
-          <button
-            onClick={() => {
+          <Button
+            onPress={() => {
               router.push({
-                pathname: "/settings",
+                pathname: "/settings/Show",
                 query: {},
               });
             }}
           >
-            back
-          </button>
+            Back
+          </Button>
         </div>
       </LayoutSettings>
     </div>
