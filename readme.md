@@ -12,11 +12,20 @@ The interface consists of two parts, the first is the display of the build order
 
 The second part and an interface allowing the creation of build order, the modifications and the deletion.
 
-![Alt text](/docs/settings.png "Optional title")
+This interface is the interaction menu, it shows several categories
+![Alt text](/docs/menu.png "Optional title")
+
+This interface allows you to display all the build orders contained in the database
+![Alt text](/docs/selectBuild.png "Optional title")
+
+This interface allows the creation of new build order
+![Alt text](/docs/createBuild.png "Optional title")
 
 # Shortcuts
 
 The application is controlled by 5 main keys, num 5 to num 9.
+
+**When opening the application, do CTRL + SHIFT + A to open the configuration menu**
 
 Ctrl+Shift+A= backspace
 num6= show or hide player interface

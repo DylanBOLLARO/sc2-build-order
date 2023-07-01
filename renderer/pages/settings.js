@@ -27,7 +27,7 @@ const settings = () => {
   }, []);
 
   return (
-    <div className="m-0 min-h-screen p-0">
+    <div className="m-0 p-0">
       <LayoutSettings title={"Settings"}>
         <div className="m-3 flex flex-wrap justify-center gap-5">
           <ActionAreaCard
