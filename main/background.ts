@@ -151,15 +151,15 @@ if (isProd) {
 
   ipcMain.handle("add-data-to-db", async (event, data) => {
     return new Promise((resolve, reject) => {
-      const { title, category } = data;
+      const { title, playrace, versusrace } = data;
       db.run(
-        "INSERT INTO build_order (title, category_id) VALUES (?, ?);",
-        [title, category],
+        "INSERT INTO build_order (title, playrace, versusrace ) VALUES (?, ?, ?);",
+        [title, playrace, versusrace],
         function (err) {
           if (err) {
             reject(err.message);
           } else {
-            console.log("title : " + title, "category : " + category);
+            console.log("title : " + title,  playrace + " vs "+ versusrace);
             settingsWindow.webContents.send("data-added");
             resolve({ success: true, message: "Data added successfully" });
           }

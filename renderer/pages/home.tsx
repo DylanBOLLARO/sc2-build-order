@@ -3,7 +3,7 @@ import { useRouter } from "next/router";
 import Layout from "../components/Layout";
 import { ipcRenderer } from "electron";
 import Image from "next/image";
-import colorName from "../constants/colors";
+import { colorName } from "../constants/colors";
 
 function Home() {
   const router = useRouter();
@@ -42,8 +42,12 @@ function Home() {
     };
   }, []);
 
-  const buildOrder= [{name:"terran"},{name:"zerg"},{name:"protoss"}]
-  
+  const buildOrder = [
+    { name: "terran" },
+    { name: "zerg" },
+    { name: "protoss" },
+  ];
+
   return (
     <Layout title={"Sir, choose your race !"}>
       <div className="flex justify-between gap-2 overflow-hidden">

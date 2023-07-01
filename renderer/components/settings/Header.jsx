@@ -11,7 +11,16 @@ import { useRouter } from "next/router";
 export default function Header() {
   const router = useRouter();
   return (
-    <Box sx={{ flexGrow: 1 }}>
+    <Box
+      sx={{
+        flexGrow: 1,
+        position: "fixed",
+        top: 0,
+        left: 0,
+        width: "100%",
+        zIndex: "100",
+      }}
+    >
       <AppBar
         position="static"
         sx={{

@@ -24,68 +24,66 @@ export default function ProductScreen() {
   useEffect(() => {
     console.log(`${query.racePlayed + "v" + query.raceOpponent}`);
     (async () => {
-      try {
-        const newData = await ipcRenderer.invoke(
-          "db-query",
-          `SELECT build_order.* FROM build_order JOIN categories ON build_order.category_id = categories.id WHERE categories.title = '${
-            query.racePlayed + "v" + query.raceOpponent
-          }';`
-        );
-
-        console.log("data from database : " + JSON.stringify(newData));
-        console.log("data INCORPORATION : " + JSON.stringify(data));
-
-        setData(newData);
-      } catch (error) {
-        console.error(error);
-      }
+      // try {
+      //   const newData = await ipcRenderer.invoke(
+      //     "db-query",
+      //     `SELECT build_order.* FROM build_order JOIN categories ON build_order.category_id = categories.id WHERE categories.title = '${
+      //       query.racePlayed + "v" + query.raceOpponent
+      //     }';`
+      //   );
+      //   console.log("data from database : " + JSON.stringify(newData));
+      //   console.log("data INCORPORATION : " + JSON.stringify(data));
+      //   setData(newData);
+      // } catch (error) {
+      //   console.error(error);
+      // }
     })();
   }, [selectedBuild]);
 
-  useEffect(() => {
-    ipcRenderer.on("num7", () => {
-      decCounter();
-    });
+  // useEffect(() => {
+  //   ipcRenderer.on("num7", () => {
+  //     decCounter();
+  //   });
 
-    ipcRenderer.on("num8", async () => {
-      const newData = await ipcRenderer.invoke(
-        "db-query",
-        `SELECT build_order.* FROM build_order JOIN categories ON build_order.category_id = categories.id WHERE categories.title = '${
-          query.racePlayed + "v" + query.raceOpponent
-        }';`
-      );
+  //   // ipcRenderer.on("num8", async () => {
+  //   //   const newData = await ipcRenderer.invoke(
+  //   //     "db-query",
+  //   //     `SELECT build_order.* FROM build_order JOIN categories ON build_order.category_id = categories.id WHERE categories.title = '${
+  //   //       query.racePlayed + "v" + query.raceOpponent
+  //   //     }';`
+  //   //   );
 
-      console.log("newData[selectedBuild].id : " + newData[selectedBuild].id);
+  //     console.log("newData[selectedBuild].id : " + newData[selectedBuild].id);
 
-      router.push({
-        pathname: "/DisplayBuild",
-        query: {
-          racePlayed: query.racePlayed,
-          raceOpponent: query.raceOpponent,
+  //     router.push({
+  //       pathname: "/DisplayBuild",
+  //       query: {
+  //         racePlayed: query.racePlayed,
+  //         raceOpponent: query.raceOpponent,
 
-          build: newData[selectedBuild].id,
-        },
-      });
-    });
+  //         build: newData[selectedBuild].id,
+  //       },
+  //     });
+  //   });
 
-    ipcRenderer.on("num9", () => {
-      incCounter();
-    });
+  //   ipcRenderer.on("num9", () => {
+  //     incCounter();
+  //   });
 
-    ipcRenderer.on("Ctrl+Shift+A", async () => {
-      router.push({
-        pathname: "/OpponentRace",
-        query: { racePlayed: query.racePlayed },
-      });
-    });
+  //   ipcRenderer.on("Ctrl+Shift+A", async () => {
+  //     router.push({
+  //       pathname: "/OpponentRace",
+  //       query: { racePlayed: query.racePlayed },
+  //     });
+  //   });
 
-    return () => {
-      ipcRenderer.removeAllListeners("num7");
-      ipcRenderer.removeAllListeners("num8");
-      ipcRenderer.removeAllListeners("num9");
-      ipcRenderer.removeAllListeners("Ctrl+Shift+A");
-    };
-  }, [selectedBuild]);
+  //   return () => {
+  //     ipcRenderer.removeAllListeners("num7");
+  //     ipcRenderer.removeAllListeners("num8");
+  //     ipcRenderer.removeAllListeners("num9");
+  //     ipcRenderer.removeAllListeners("Ctrl+Shift+A");
+  //   };
+  // }, [selectedBuild]);
 
   return (
     <Layout title={`Select your build order`}>
