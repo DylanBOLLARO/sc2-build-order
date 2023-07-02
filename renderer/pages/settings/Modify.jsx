@@ -1,9 +1,9 @@
 import { useRouter } from "next/router";
 import React, { useCallback, useEffect, useState } from "react";
 import LayoutSettings from "../../components/settings/LayoutSettings";
-import { Button, Grid, Input, Table, Text } from "@nextui-org/react";
+import { Button, TextField } from "@mui/material";
+import BasicTable from "../../components/settings/BasicTable";
 import { ipcRenderer } from "electron";
-import { AiFillDelete } from "react-icons/ai";
 
 function ViewAndChange() {
   const router = useRouter();
@@ -34,34 +34,43 @@ function ViewAndChange() {
     return false;
   }
 
-  const checkingFieldsOfBuild = (bo) => {
-    if (bo.timer === "" || bo.population === "" || bo.description === "") {
-      return false;
-    } else {
-      return true;
-    }
-  };
-
   const handleDataAdded = () => {
     console.log("handleDataAdded");
     setDataAdded(true);
   };
 
-  const handleFormSubmit = async () => {
-    if (checkingFieldsOfBuild(localBuildOrder)) {
-      try {
-        await ipcRenderer.invoke("add-line-build-order-to-db", {
-          timer: parseInt(localBuildOrder.timer),
-          population: parseInt(localBuildOrder.population),
-          content: localBuildOrder.description,
-          build_order_id: parseInt(query.id),
-        });
+  useEffect(() => {
+    console.log("buildData : " + JSON.stringify(query.test));
 
-        console.log("localBuildOrder : " + JSON.stringify(localBuildOrder));
-        handleDataAdded();
+    (async () => {
+      try {
+        const newData = await ipcRenderer.invoke(
+          "db-query",
+          `SELECT * FROM etapes WHERE build_order_id=${query.test};`
+        );
+        if (data !== newData) {
+          setData(newData);
+          console.log("data : " + JSON.stringify(newData));
+        }
       } catch (error) {
         console.error(error);
       }
+    })();
+  }, []);
+
+  const handleFormSubmit = async () => {
+    try {
+      await ipcRenderer.invoke("add-line-build-order-to-db", {
+        timer: parseInt(localBuildOrder.timer),
+        population: parseInt(localBuildOrder.population),
+        content: localBuildOrder.description,
+        build_order_id: parseInt(query.test),
+      });
+
+      console.log("localBuildOrder : " + JSON.stringify(localBuildOrder));
+      handleDataAdded();
+    } catch (error) {
+      console.error(error);
     }
     updateLineOfBuild();
   };
@@ -78,7 +87,7 @@ function ViewAndChange() {
       try {
         const newData = await ipcRenderer.invoke(
           "db-query",
-          `SELECT * FROM etapes WHERE build_order_id=${query.id};`
+          `SELECT * FROM etapes WHERE build_order_id=${query.test};`
         );
         setData(newData);
         console.log("data : " + JSON.stringify(newData));
@@ -96,8 +105,31 @@ function ViewAndChange() {
   return (
     <div className="m-0 p-0">
       <LayoutSettings title={"Modify build order"}>
-        <div className="px-10">
-          <Text
+        <div className="m-5 flex flex-col gap-5">
+          <div className="flex flex-row justify-between">
+            <Button
+              sx={{ width: "200px" }}
+              variant="outlined"
+              onClick={() => {
+                router.push({
+                  pathname: "/settings/Show",
+                });
+              }}
+            >
+              Back
+            </Button>
+            <Button
+              sx={{ width: "200px" }}
+              variant="outlined"
+              color="success"
+              auto
+              ghost
+              // onClick={handleFormSubmit}
+            >
+              Export
+            </Button>
+          </div>
+          {/* <Text
             h1
             size={60}
             css={{
@@ -107,8 +139,9 @@ function ViewAndChange() {
             weight="bold"
           >
             {query.title}
-          </Text>
-          <div>
+          </Text> */}
+          <BasicTable data={data} local={localBuildOrder} />
+          {/* <div>
             <Table
               bordered
               shadow={false}
@@ -182,63 +215,43 @@ function ViewAndChange() {
                 )}
               </Table.Body>
             </Table>
-          </div>
-          <div className="py-5">
-            <Grid.Container
-              gap={4}
-              css={{
-                display: "flex",
-                flexDirection: "row",
-                justifyContent: "center",
+          </div> */}
+          <div className="flex flex-row justify-between">
+            <TextField
+              id="Description-basic"
+              label="Description"
+              variant="outlined"
+              onChange={(e) => {
+                updateLocalBuild("description", e.target.value);
               }}
+            />
+            <TextField
+              id="Population-basic"
+              label="Population"
+              variant="outlined"
+              onChange={(e) => {
+                updateLocalBuild("population", e.target.value);
+              }}
+            />
+            <TextField
+              id="Timer-basic"
+              label="Timer"
+              variant="outlined"
+              onChange={(e) => {
+                updateLocalBuild("timer", e.target.value);
+              }}
+            />
+
+            <Button
+              variant="outlined"
+              color="secondary"
+              auto
+              ghost
+              onClick={handleFormSubmit}
             >
-              <Grid>
-                <Input
-                  bordered
-                  labelPlaceholder="Population"
-                  color="primary"
-                  onChange={(e) => {
-                    updateLocalBuild("population", e.target.value);
-                  }}
-                />
-              </Grid>
-              <Grid>
-                <Input
-                  bordered
-                  labelPlaceholder="Timer"
-                  color="secondary"
-                  onChange={(e) => {
-                    updateLocalBuild("timer", e.target.value);
-                  }}
-                />
-              </Grid>
-              <Grid>
-                <Input
-                  bordered
-                  labelPlaceholder="Description"
-                  color="error"
-                  onChange={(e) => {
-                    updateLocalBuild("description", e.target.value);
-                  }}
-                />
-              </Grid>
-              <Grid>
-                <Button color="secondary" auto ghost onPress={handleFormSubmit}>
-                  Save line
-                </Button>
-              </Grid>
-            </Grid.Container>
+              Save line
+            </Button>
           </div>
-          <Button
-            onPress={() => {
-              router.push({
-                pathname: "/settings/Show",
-                query: {},
-              });
-            }}
-          >
-            Back
-          </Button>
         </div>
       </LayoutSettings>
     </div>

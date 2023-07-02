@@ -21,6 +21,9 @@ This interface allows you to display all the build orders contained in the datab
 This interface allows the creation of new build order
 ![Alt text](/docs/createBuild.png "Optional title")
 
+This interface allows you to add, delete or modify steps, it also allows you to export the build order for to share it
+![Alt text](/docs/modifyBuild.png "Optional title")
+
 # Shortcuts
 
 The application is controlled by 5 main keys, num 5 to num 9.

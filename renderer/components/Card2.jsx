@@ -3,10 +3,20 @@ import Card from "@mui/material/Card";
 import CardMedia from "@mui/material/CardMedia";
 import { CardActionArea, Chip } from "@mui/material";
 import { namesAndColors } from "../constants/colors";
+import { useRouter } from "next/router";
 
 export default function ActionAreaCard2({ buildData }) {
+  const router = useRouter();
+
   return (
     <Card
+      onClick={() => {
+        console.log("data of build data : " + JSON.stringify(buildData));
+        router.push({
+          pathname: "/settings/Modify",
+          query: { test: buildData.id },
+        });
+      }}
       sx={{
         width: 400,
         borderRadius: 2,
@@ -34,8 +44,8 @@ export default function ActionAreaCard2({ buildData }) {
               <Chip
                 sx={{
                   color: "#18181b",
-                  fontSize: "20px",
-                  fontFamily: "serif",
+                  fontSize: "18px",
+                  fontFamily: "arial",
                   backgroundColor: namesAndColors[buildData?.playrace]?.color,
                 }}
                 label={namesAndColors[buildData?.playrace]?.name}
@@ -44,8 +54,8 @@ export default function ActionAreaCard2({ buildData }) {
               <Chip
                 sx={{
                   color: "#18181b",
-                  fontSize: "20px",
-                  fontFamily: "serif",
+                  fontSize: "18px",
+                  fontFamily: "arial",
                   backgroundColor: namesAndColors[buildData?.versusrace]?.color,
                 }}
                 label={namesAndColors[buildData?.versusrace]?.name}
